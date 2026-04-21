@@ -1,0 +1,7 @@
+# Go build artifacts
+*.exe
+*.test
+*.out
+vendor/
+.env
+.DS_Store
