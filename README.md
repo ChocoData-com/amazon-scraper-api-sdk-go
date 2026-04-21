@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/ChocoData-com/amazon-scraper-api-sdk-go)](https://goreportcard.com/report/github.com/ChocoData-com/amazon-scraper-api-sdk-go)
 [![license](https://img.shields.io/github/license/ChocoData-com/amazon-scraper-api-sdk-go)](./LICENSE)
 
-Official Go client for **[Amazon Scraper API](https://www.amazonscraperapi.com/)**. Flat-priced at $0.50 per 1,000 successful requests, no credits system, pay only for 2xx responses. Idiomatic Go types, context-aware cancellation, works with the standard `net/http` client under the hood.
+Official Go client for **[Amazon Scraper API](https://www.amazonscraperapi.com/)**. Pay only for successful (2xx) responses — non-2xx never cost you anything. Pricing starts at $0.90 per 1,000 requests on pay-as-you-go, drops to a flat **$0.50 per 1,000 requests** on Custom plans. 1,000 free requests on signup, no card. Idiomatic Go types, context-aware cancellation, works with the standard `net/http` client under the hood.
 
 ## Benchmark (live production, 2026-04)
 
@@ -189,7 +189,7 @@ if err != nil {
 | 503 | `SERVICE_OVERLOADED` | Global circuit breaker | Honor `Retry-After: 60` |
 | 500 | `INTERNAL_ERROR` | Our bug | Report `X-Request-Id` |
 
-**Flat-credit promise:** non-2xx responses are free. `X-Request-Id` on every response.
+**Flat-credit promise:** non-2xx responses are free. A basic request costs 5 credits (billing unit; end-customer price is $0.90 per 1,000 basic requests PAYG). Future JS-rendered calls will cost 15 credits. `X-Request-Id` on every response.
 
 ## Get an API key
 
