@@ -4,18 +4,21 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/ChocoData-com/amazon-scraper-api-sdk-go)](https://goreportcard.com/report/github.com/ChocoData-com/amazon-scraper-api-sdk-go)
 [![license](https://img.shields.io/github/license/ChocoData-com/amazon-scraper-api-sdk-go)](./LICENSE)
 
-Official Go client for **[Amazon Scraper API](https://amazonscraperapi.com)** — flat-priced ($0.50 per 1,000 successful requests), no credits system, pay only for 2xx responses.
+Official Go client for **[Amazon Scraper API](https://www.amazonscraperapi.com/)**. Flat-priced at $0.50 per 1,000 successful requests, no credits system, pay only for 2xx responses. Idiomatic Go types, context-aware cancellation, works with the standard `net/http` client under the hood.
 
 ## Benchmark (live production, 2026-04)
 
-| Metric | Ours | ScrapingBee $49 tier | ScraperAPI $49 tier |
-|---|---|---|---|
-| Median latency (product, US) | **~2.6 s** | ~3.3 s | n/a |
-| P95 latency | **~6 s** | ~22 s | n/a |
-| Price / 1,000 Amazon products | **$0.50** | $1.63 | $12.25 |
-| Concurrent threads (entry paid) | **50** | 10 | 20 |
+Measured on our own infrastructure against a 30-query mixed international set:
 
-Same 30-query international set; tied ScrapingBee on success rate, 3–4× faster at P95.
+| Metric | Value |
+|---|---|
+| Median latency (product, US) | **~2.6 s** |
+| P95 latency | **~6 s** |
+| P99 latency | ~10.5 s |
+| Price / 1,000 Amazon products | **$0.50** flat |
+| Concurrent threads (entry paid plan) | **50** |
+| Marketplaces supported | **20+** |
+| Billing unit | per successful (2xx) response |
 
 ---
 
@@ -25,9 +28,9 @@ Same 30-query international set; tied ScrapingBee on success rate, 3–4× faste
 go get github.com/ChocoData-com/amazon-scraper-api-sdk-go
 ```
 
-Requires Go ≥ 1.21.
+Requires Go >= 1.21.
 
-## Quick start — single product
+## Quick start - single product
 
 ```go
 package main
@@ -53,9 +56,9 @@ func main() {
         log.Fatal(err)
     }
     fmt.Println(product["title"])
-    // → Apple AirPods Pro (2nd Generation)...
+    // Apple AirPods Pro (2nd Generation)...
     fmt.Println(product["price"])
-    // → map[current:199 currency:USD was:249]
+    // map[current:199 currency:USD was:249]
 }
 ```
 
@@ -72,11 +75,11 @@ map[string]any{
     "buybox":       map[string]any{"seller": "Amazon.com", "prime": true},
     "images":       []any{"https://m.media-amazon.com/images/I/...jpg"},
     "bullets":      []any{"Active Noise Cancellation...", "Adaptive Audio..."},
-    "variants":     []any{...},
+    "variants":     []any{},
 }
 ```
 
-Access fields by casting or use `encoding/json` with a typed struct if you prefer strong typing.
+Access fields by casting, or use `encoding/json` with a typed struct if you prefer strong typing.
 
 ## Keyword search
 
@@ -91,7 +94,7 @@ if err != nil {
     log.Fatal(err)
 }
 for _, r := range results.Results {
-    fmt.Printf("%d. %s — %v\n", r.Position, r.Title, r.Price)
+    fmt.Printf("%d. %s - %v\n", r.Position, r.Title, r.Price)
 }
 ```
 
@@ -110,7 +113,7 @@ if err != nil {
     log.Fatal(err)
 }
 fmt.Println("batch id:", batch.ID)
-// SAVE THIS — returned only once
+// SAVE THIS. Returned only once.
 fmt.Println("webhook secret:", batch.WebhookSignatureSecret)
 
 // Alternative: poll
@@ -139,20 +142,20 @@ func asaWebhookHandler(w http.ResponseWriter, r *http.Request) {
 
 ## What the API solves for you
 
-A production Amazon scraper is a **2–4 week** engineering project plus permanent maintenance. This SDK wraps a managed service that has already solved:
+Building a production-grade Amazon scraper in-house is a 2-4 week engineering project plus permanent maintenance. This SDK wraps [Amazon Scraper API](https://www.amazonscraperapi.com/), which has already solved:
 
 | Pain point | What we handle |
 |---|---|
-| **Amazon CAPTCHAs / robot pages** | Auto-retried through a heavier proxy tier (DC → residential → premium) |
+| **Amazon CAPTCHAs / robot pages** | Auto-retried through a heavier proxy tier (datacenter, residential, premium) |
 | **Brittle CSS selectors** | Extractors update as Amazon changes layouts; your code doesn't |
-| **20+ marketplaces** | `com`, `co.uk`, `de`, `co.jp`, `com.br`, ... marketplace-specific parsing quirks handled |
+| **20+ marketplaces** | `com`, `co.uk`, `de`, `co.jp`, `com.br`, and more. Marketplace-specific parsing quirks handled. |
 | **Country-matched residential IPs** | Auto-routed by TLD; override with `Country: "DE"` |
 | **Rotating proxies + anti-fingerprinting** | Handled server-side |
 | **Rate-limit retries** | Transparent |
-| **Structured JSON output** | Title, price, rating, reviews, variants, seller, images — parsed |
+| **Structured JSON output** | Title, price, rating, reviews, variants, seller, images. Parsed. |
 | **Batch/async jobs** | 1,000 ASINs submitted, webhook-delivered on completion |
 
-**Time saved:** a greenfield Go Amazon scraper built to this spec takes ~80 engineer-hours. This client is 5 minutes.
+**Time saved:** a greenfield Go Amazon scraper built to this spec takes roughly 80 engineer-hours. This client is 5 minutes.
 
 ## Error handling
 
@@ -190,10 +193,11 @@ if err != nil {
 
 ## Get an API key
 
-[app.amazonscraperapi.com](https://app.amazonscraperapi.com) — **1,000 free requests on signup, no credit card required.**
+[app.amazonscraperapi.com](https://app.amazonscraperapi.com). **1,000 free requests on signup, no credit card required.**
 
 ## Links
 
+- **Website:** https://www.amazonscraperapi.com/
 - **Docs:** https://amazonscraperapi.com/docs
 - **Status:** https://amazonscraperapi.com/status
 - **Pricing:** https://amazonscraperapi.com/pricing

@@ -1,0 +1,16 @@
+name: verify
+# Tag push triggers smoke build; Go proxy ingests automatically from the tag.
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - run: go build ./...
+      - run: go vet ./...
